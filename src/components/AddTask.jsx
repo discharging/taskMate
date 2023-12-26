@@ -1,4 +1,12 @@
+import { useEffect, useState } from "react";
+
 export const AddTask = ({ tasklist, setTasklist, task, setTask }) => {
+  const [inputVal, setInputVal] = useState("");
+
+  useEffect(() => {
+    setInputVal(task.name || "");
+  }, [task]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -8,36 +16,39 @@ export const AddTask = ({ tasklist, setTasklist, task, setTask }) => {
         todo.id === task.id
           ? {
               id: task.id,
-              name: task.name,
+              name: inputVal,
               time: `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`,
             }
           : todo
       );
       setTasklist(updatedTasklist);
       setTask({});
+      setInputVal("");
     } else {
       const date = new Date();
       const newTask = {
         id: date.getTime(),
-        name: e.target.task.value,
+        name: inputVal,
         time: `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`,
       };
       setTasklist([...tasklist, newTask]);
-      setTask({});
+      setInputVal("");
     }
   };
-
+  function handleInput(value) {
+    setInputVal(value);
+  }
   return (
     <section className="addTask">
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="task"
-          value={task.name || ""}
+          value={inputVal}
           autoComplete="off"
           placeholder="add task"
           maxLength="25"
-          onChange={(e) => setTask({ ...task, name: e.target.value })}
+          onChange={(e) => handleInput(e.target.value)}
         />
         <button type="submit">{task.id ? "Update" : "Add"}</button>
       </form>
